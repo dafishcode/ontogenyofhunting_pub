@@ -44,6 +44,7 @@ datHuntLabelledEventsSB <- readRDS(file=paste0("dat/datHuntLabelledEvents.rds"))
 datHuntLabelledEventsSB_evoked <-  datHuntLabelledEventsSB[datHuntLabelledEventsSB$groupID %in% c("LL","DL","NL"),]
 datFishSuccessRate <- getHuntSuccessPerFish(datHuntLabelledEventsSB_evoked)
 
+#write.csv(datFishSuccessRate,file="dat/datHuntEfficiencyPerLarva_AllGroups.csv")
 tblResSB <- table(convertToScoreLabel(datHuntLabelledEventsSB_evoked$huntScore),datHuntLabelledEventsSB_evoked$groupID)
 
 datFishSuccessRate$groupID <- factor(datFishSuccessRate$groupID)
@@ -183,5 +184,16 @@ plotWidthIn <- 8
 
 ######################
 
+## Z-Score ###
+muEff_LF <- mean(datFishSuccessRate[datFishSuccessRate$groupID == "LL","Efficiency" ], na.rm = TRUE)
+muEff_NF <- mean(datFishSuccessRate[datFishSuccessRate$groupID == "NL","Efficiency" ], na.rm = TRUE)
+muEff_DF <- mean(datFishSuccessRate[datFishSuccessRate$groupID == "DL","Efficiency" ], na.rm = TRUE)
+  
+stdNFLF <- sd(datFishSuccessRate[datFishSuccessRate$groupID %in% c("NL","LL"),"Efficiency" ], na.rm = TRUE)
+stdDFLF <- sd(datFishSuccessRate[datFishSuccessRate$groupID %in% c("DL","LL"),"Efficiency" ], na.rm = TRUE)
 
+zScoreNFLF <- (muEff_LF-muEff_NF)/stdNFLF
+zScoreDFLF <- (muEff_LF-muEff_DF)/stdDFLF
 
+message(paste("Z-Score NF-LF Efficiency",zScoreNFLF) )
+message(paste("Z-Score DF-LF Efficiency",zScoreDFLF) )
